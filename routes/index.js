@@ -1,8 +1,9 @@
 const router =  require('express').Router();
+const wordController = require('../controllers/word.controller');
 
-router.get('/', (req, res)=>{
-    res.send('hello there')
-});
-
+router.post('/create', wordController.create);
+router.post('/upload', wordController.upload);
+router.get('/show', wordController.show);
+router.delete('/delete', wordController.delete);
 
 module.exports = router;

@@ -26,15 +26,7 @@ To get a local copy up and running follow these simple example steps.
 ```
 3. import sql file from /database directory to your database
 
-4. create .env file with this scaffold
-
-```
-    PORT= # port where api is to work
-    USER= # database user name
-    PASSWORD= # database user password
-    DB= # database name
-    HOST= # your host eg.localhost
-```
+4. copy, rename .env.example to .env and add your server credentials 
 5. run api
 ```bash
     npm run start
@@ -48,3 +40,4 @@ To get a local copy up and running follow these simple example steps.
  - [NodeJS](https://nodejs.org/en/docs/)
  - [express.js](https://expressjs.com/en/api.html)
  - [mysql](https://dev.mysql.com/doc/)
+ - [Formidable](https://openbase.io/js/express-formidable/documentation)
