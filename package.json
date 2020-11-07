@@ -20,6 +20,7 @@
   "homepage": "https://github.com/PSmigielski/vocabulary-testing-platform#readme",
   "dependencies": {
     "express": "^4.17.1",
+    "formidable": "^1.2.2",
     "mysql": "^2.18.1"
   },
   "devDependencies": {
