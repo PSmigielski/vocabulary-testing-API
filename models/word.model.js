@@ -108,11 +108,20 @@ Word.show = (sectionID , result) => {
     }
   })
 }
-Word.delete = (id, result) => {
-
-}
-Word.deleteSet = (words, result) => {
-
+Word.delete = (sectionID, result) => {
+  sql.query("DELETE FROM users WHERE id = ?", id, (err, data) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+    if (res.affectedRows == 0) {
+      result({ type: "404" }, null);
+      return;
+    }
+    console.log("deleted users with id: ", id);
+    result(null, res);
+  });
 }
 
 module.exports = Word;
