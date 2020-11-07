@@ -37,3 +37,16 @@ exports.upload = (req, res) => {
     })
   }
 }
+exports.show = (req, res) => {
+  if(!req.query){
+    res.status(400).send({message: 'Content can not be empty!'});
+  }else{
+    wordModel.show(req.query.sectionID, (err, data) =>{
+      if(err){
+        if(err.type == '404') res.status(404).send({message:'this section don\'t exist'})
+        else res.status(500).send({message: 'something went wrong, try later'})
+      }
+      else res.status(200).send({data: data});
+    })
+  }
+}

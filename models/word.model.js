@@ -15,18 +15,15 @@ Word.create = (newWord, result) => {
   db.query(`SELECT * FROM \`words\` WHERE \`word\` = '${newWord.word}'`, (err, res)=>{
     if(err){
       result(err, null);
-      throw err;
       return;
     }
     if(res.length > 0){
       result({kind:'conflict'}, null);
-      throw err;
       return;
     } else {
       db.query('INSERT INTO `words` (`id`,`word`,`definition`,`section_id`) VALUES (?,?,?,?)', [newWord.id, newWord.word, newWord.definition, newWord.section_id], (err, res) => {
         if(err){
           result(err, null);
-          throw err;
           return;
         } else {
           result(null, {message: 'word has been added'});
@@ -95,14 +92,27 @@ Word.upload = (req ,result) =>{
     }
   })
 }
+Word.show = (sectionID , result) => {
+  db.query(`SELECT * FROM \`words\` WHERE \`section_id\` = ${sectionID}`, (err, data) => {
+    if(err){
+      result(err, null);
+      return;
+    }      
+    if(data.length == 0){
+      result({type: '404'}, null);
+      return;
+    }
+    else {
+      console.log(data)
+      result(null, data);
+    }
+  })
+}
 Word.delete = (id, result) => {
 
 }
 Word.deleteSet = (words, result) => {
 
-}
-Word.showSet = (sectionID , result) => {
-    
 }
 
 module.exports = Word;
