@@ -1,7 +1,7 @@
 require('dotenv').config();
 const db = require('./database/index')
 const express = require('express');
-const Routes = require('./routes/index');
+const Routes = require('./routes/word');
 
 const app = express();
 app.use(express.json());
