@@ -105,6 +105,7 @@ Exam.create = async (materialScope, result) => {
               translation === 1
                 ? words[correctIndex].definition
                 : words[correctIndex].word,
+            questionType: "chooseOne",
           };
           examQuestions.push(question);
 
@@ -128,6 +129,7 @@ Exam.create = async (materialScope, result) => {
               translation === 1 ? questionWord.word : questionWord.definition,
             answer:
               translation === 1 ? questionWord.definition : questionWord.word,
+            questionType: "Complete",
           };
           examQuestions.push(question1);
           break;
@@ -164,12 +166,41 @@ Exam.create = async (materialScope, result) => {
               translation === 1 ? proposition.definition : proposition.word,
             correctAnswer:
               translation === 1 ? questionWord.definition : questionWord.word,
+            questionType: "True/False",
           };
           examQuestions.push(question2);
           break;
       }
     }
-    result(null, examQuestions);
+    result(null, { questions: examQuestions, testLen: examQuestions.length });
   });
+};
+
+Exam.saveResults = (examResults, result) => {
+  const procentage = (examResults.gainedPoints / examResults.maxPoints) * 100;
+  let passed = false;
+  if (procentage.toFixed(2) > 80) {
+    passed = true;
+  }
+  db.query(
+    "INSERT INTO `test_results` (`username`,`maxPoints`,`gainedPoints`, `procentage`, `passed`) VALUES (?,?,?,?,?)",
+    [
+      examResults.username,
+      examResults.maxPoints,
+      examResults.gainedPoints,
+      procentage.toFixed(2),
+      passed,
+    ],
+    (err, res) => {
+      if (err) {
+        console.log("Error: ", err);
+        result(err, null);
+        return;
+      } else {
+        result(null, res);
+        return;
+      }
+    }
+  );
 };
 module.exports = Exam;

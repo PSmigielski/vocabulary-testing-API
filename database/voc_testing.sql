@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.4
+-- version 4.9.7deb1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Nov 05, 2020 at 10:38 AM
--- Server version: 10.5.5-MariaDB
--- PHP Version: 7.4.10
+-- Host: localhost:3306
+-- Czas generowania: 26 Lis 2020, 19:29
+-- Wersja serwera: 8.0.22-0ubuntu0.20.10.2
+-- Wersja PHP: 7.4.9
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -18,23 +19,23 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `voc_testing`
+-- Baza danych: `voc_testing`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sections`
+-- Struktura tabeli dla tabeli `sections`
 --
 
 CREATE TABLE `sections` (
-  `id` int(11) NOT NULL,
-  `section_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `wordsAmount` int(11) DEFAULT NULL
+  `id` int NOT NULL,
+  `section_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `wordsAmount` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `sections`
+-- Zrzut danych tabeli `sections`
 --
 
 INSERT INTO `sections` (`id`, `section_name`, `wordsAmount`) VALUES
@@ -161,18 +162,33 @@ INSERT INTO `sections` (`id`, `section_name`, `wordsAmount`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `words`
+-- Struktura tabeli dla tabeli `test_results`
+--
+
+CREATE TABLE `test_results` (
+  `id` int NOT NULL,
+  `username` varchar(255) COLLATE utf8_polish_ci NOT NULL,
+  `maxPoints` int NOT NULL,
+  `gainedPoints` int NOT NULL,
+  `procentage` float NOT NULL,
+  `passed` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `words`
 --
 
 CREATE TABLE `words` (
-  `id` int(11) NOT NULL,
-  `word` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `definition` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `section_id` int(11) NOT NULL
+  `id` int NOT NULL,
+  `word` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `definition` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `section_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `words`
+-- Zrzut danych tabeli `words`
 --
 
 INSERT INTO `words` (`id`, `word`, `definition`, `section_id`) VALUES
@@ -9432,44 +9448,56 @@ INSERT INTO `words` (`id`, `word`, `definition`, `section_id`) VALUES
 (9247, 'dlaczego nie pójdziemy do cyrku?', 'why don\'t we go to the circus?', 106);
 
 --
--- Indexes for dumped tables
+-- Indeksy dla zrzutów tabel
 --
 
 --
--- Indexes for table `sections`
+-- Indeksy dla tabeli `sections`
 --
 ALTER TABLE `sections`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `words`
+-- Indeksy dla tabeli `test_results`
+--
+ALTER TABLE `test_results`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeksy dla tabeli `words`
 --
 ALTER TABLE `words`
   ADD PRIMARY KEY (`id`),
   ADD KEY `section_id` (`section_id`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT dla zrzuconych tabel
 --
 
 --
--- AUTO_INCREMENT for table `sections`
+-- AUTO_INCREMENT dla tabeli `sections`
 --
 ALTER TABLE `sections`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=120;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=120;
 
 --
--- AUTO_INCREMENT for table `words`
+-- AUTO_INCREMENT dla tabeli `test_results`
+--
+ALTER TABLE `test_results`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT dla tabeli `words`
 --
 ALTER TABLE `words`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9248;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9248;
 
 --
--- Constraints for dumped tables
+-- Ograniczenia dla zrzutów tabel
 --
 
 --
--- Constraints for table `words`
+-- Ograniczenia dla tabeli `words`
 --
 ALTER TABLE `words`
   ADD CONSTRAINT `words_ibfk_1` FOREIGN KEY (`section_id`) REFERENCES `sections` (`id`);
