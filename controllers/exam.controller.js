@@ -22,7 +22,7 @@ exports.saveResults = (req, res) => {
     } else {
       examModel.saveResults(
         {
-          username: req.body.username,
+          user_id: req.body.user_id,
           maxPoints: req.body.maxPoints,
           gainedPoints: req.body.gainedPoints,
         },

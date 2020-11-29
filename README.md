@@ -40,4 +40,6 @@ To get a local copy up and running follow these simple example steps.
  - [NodeJS](https://nodejs.org/en/docs/)
  - [express.js](https://expressjs.com/en/api.html)
  - [mysql](https://dev.mysql.com/doc/)
- - [Formidable](https://openbase.io/js/express-formidable/documentation)
+ - [crypto-js](https://cryptojs.gitbook.io/docs/)
+ - [nodemailer](https://nodemailer.com/about/)
+ - [jsonwebtoken](https://jwt.io/)
