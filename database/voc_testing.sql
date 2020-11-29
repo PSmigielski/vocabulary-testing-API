@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Czas generowania: 26 Lis 2020, 19:29
+-- Czas generowania: 29 Lis 2020, 20:16
 -- Wersja serwera: 8.0.22-0ubuntu0.20.10.2
 -- Wersja PHP: 7.4.9
 
@@ -21,6 +21,18 @@ SET time_zone = "+00:00";
 --
 -- Baza danych: `voc_testing`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `reset-password`
+--
+
+CREATE TABLE `reset-password` (
+  `id` int NOT NULL,
+  `email` varchar(255) COLLATE utf8_polish_ci NOT NULL,
+  `token` varchar(255) COLLATE utf8_polish_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 -- --------------------------------------------------------
 
@@ -167,11 +179,24 @@ INSERT INTO `sections` (`id`, `section_name`, `wordsAmount`) VALUES
 
 CREATE TABLE `test_results` (
   `id` int NOT NULL,
-  `username` varchar(255) COLLATE utf8_polish_ci NOT NULL,
+  `user_id` int NOT NULL,
   `maxPoints` int NOT NULL,
   `gainedPoints` int NOT NULL,
   `procentage` float NOT NULL,
   `passed` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `users`
+--
+
+CREATE TABLE `users` (
+  `id` int NOT NULL,
+  `email` varchar(255) COLLATE utf8_polish_ci DEFAULT NULL,
+  `username` varchar(255) COLLATE utf8_polish_ci DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8_polish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 -- --------------------------------------------------------
@@ -9452,6 +9477,13 @@ INSERT INTO `words` (`id`, `word`, `definition`, `section_id`) VALUES
 --
 
 --
+-- Indeksy dla tabeli `reset-password`
+--
+ALTER TABLE `reset-password`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `token` (`token`);
+
+--
 -- Indeksy dla tabeli `sections`
 --
 ALTER TABLE `sections`
@@ -9461,7 +9493,16 @@ ALTER TABLE `sections`
 -- Indeksy dla tabeli `test_results`
 --
 ALTER TABLE `test_results`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indeksy dla tabeli `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `username` (`username`);
 
 --
 -- Indeksy dla tabeli `words`
@@ -9473,6 +9514,12 @@ ALTER TABLE `words`
 --
 -- AUTO_INCREMENT dla zrzuconych tabel
 --
+
+--
+-- AUTO_INCREMENT dla tabeli `reset-password`
+--
+ALTER TABLE `reset-password`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT dla tabeli `sections`
@@ -9487,6 +9534,12 @@ ALTER TABLE `test_results`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
+-- AUTO_INCREMENT dla tabeli `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT dla tabeli `words`
 --
 ALTER TABLE `words`
@@ -9495,6 +9548,12 @@ ALTER TABLE `words`
 --
 -- Ograniczenia dla zrzutów tabel
 --
+
+--
+-- Ograniczenia dla tabeli `test_results`
+--
+ALTER TABLE `test_results`
+  ADD CONSTRAINT `test_results_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
 -- Ograniczenia dla tabeli `words`
