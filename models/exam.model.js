@@ -183,9 +183,9 @@ Exam.saveResults = (examResults, result) => {
     passed = true;
   }
   db.query(
-    "INSERT INTO `test_results` (`username`,`maxPoints`,`gainedPoints`, `procentage`, `passed`) VALUES (?,?,?,?,?)",
+    "INSERT INTO `test_results` (`user_id`,`maxPoints`,`gainedPoints`, `procentage`, `passed`) VALUES (?,?,?,?,?)",
     [
-      examResults.username,
+      examResults.user_id,
       examResults.maxPoints,
       examResults.gainedPoints,
       procentage.toFixed(2),
