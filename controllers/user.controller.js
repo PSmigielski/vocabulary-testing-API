@@ -106,7 +106,13 @@ exports.login = (req, res) => {
       }
     } else {
       const token = createToken(credentials.username, process.env.SECRET);
-      res.status(200).send({ token, verified: data });
+      console.log({ ...data[0], token });
+      res.status(200).send({
+        id: data[0].id,
+        email: data[0].email,
+        username: data[0].username,
+        token,
+      });
     }
   });
 };
@@ -126,15 +132,15 @@ exports.delete = (req, res) => {
   });
 };
 exports.verify = (req, res) => {
-  User.verify(req.params.username, (err, data) => {
+  User.verify(req.params.login, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
         res.status(404).send({
-          message: `Not found User with id ${req.params.username}.`,
+          message: `Not found User with id ${req.params.login}.`,
         });
       } else {
         res.status(500).send({
-          message: "Could not verify User with username " + req.params.username,
+          message: "Could not verify User with username " + req.params.login,
         });
       }
     } else res.status(200).send({ message: `User was verified successfully!` });
