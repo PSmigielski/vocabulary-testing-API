@@ -172,8 +172,7 @@ User.remove = (id, result) => {
 };
 User.verify = (username, result) => {
   sql.query(
-    `UPDATE users SET verified = '1' WHERE username = ?`,
-    username,
+    `UPDATE users SET verified = '1' WHERE username = '${username}'`,
     (err, res) => {
       if (err) {
         console.log("Error: ", err);
