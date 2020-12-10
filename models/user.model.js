@@ -81,6 +81,7 @@ User.resetPassword = (resetUser, result) => {
   );
 };
 User.create = (newUser, result) => {
+  console.log(newUser);
   sql.query(
     `SELECT * FROM users WHERE email = ?`,
     newUser.email,
@@ -95,8 +96,7 @@ User.create = (newUser, result) => {
         return;
       } else {
         sql.query(
-          `SELECT * FROM users WHERE username = ?`,
-          newUser.username,
+          `SELECT * FROM users WHERE username = '${newUser.username}'`,
           (err2, res2) => {
             if (err2) {
               console.log("error", err2);
