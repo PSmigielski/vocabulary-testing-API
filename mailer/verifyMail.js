@@ -6,7 +6,7 @@ const verifyMail = async (mail, login) => {
       from: "vocabulary testing platform",
       to: mail,
       subject: `Weryfikacja`,
-      text: `http://localhost:5000/verify/${login}`,
+      text: `http://localhost:3000/verify/${login}`,
     })
     .catch((err) => {
       console.log(err);
