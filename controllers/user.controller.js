@@ -23,7 +23,7 @@ exports.genResetPasswordToken = (req, res) => {
 };
 exports.resetPassword = (req, res) => {
   if (!req.params.token) {
-    res.status(400).send({
+    return res.status(400).send({
       message: "Token not found",
     });
   }
@@ -35,18 +35,12 @@ exports.resetPassword = (req, res) => {
   User.resetPassword(user, (err, data) => {
     if (err) {
       if (err.kind == "404") {
-        res.status(404).send({
-          message: err.message || "user not found",
-        });
+        return res.status(404).send(err.message || "user not found");
       }
       if (err.kind == "conflict") {
-        res.status(409).send({
-          message: err.message || "something went wrong",
-        });
+        return res.status(409).send(err.message || "something went wrong");
       } else {
-        res.status(500).send({
-          message: err.message || "server error",
-        });
+        return res.status(500).send(err.message || "server error");
       }
     } else {
       res.status(201).send(data);
