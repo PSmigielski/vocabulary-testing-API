@@ -94,18 +94,16 @@ exports.login = (req, res) => {
   User.login(credentials, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
-        res.status(401).send({
+        return res.status(401).send({
           message: `credentials don't match`,
         });
       }
     } else {
       const token = createToken(credentials.username, process.env.SECRET);
-      console.log({ ...data[0], token });
-      res.status(200).send({
+      res.status(200).cookie("token", token, { httpOnly: true }).send({
         id: data[0].id,
         email: data[0].email,
         username: data[0].username,
-        token,
       });
     }
   });
