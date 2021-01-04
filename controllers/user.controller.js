@@ -94,7 +94,7 @@ exports.login = (req, res) => {
   User.login(credentials, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
-        res.status(404).send({
+        res.status(401).send({
           message: `credentials don't match`,
         });
       }
