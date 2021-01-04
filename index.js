@@ -5,9 +5,11 @@ const express = require("express");
 const word = require("./routes/word");
 const exam = require("./routes/exam");
 const auth = require("./routes/auth");
+const jwt = require("express-jwt");
 
 const app = express();
 app.use(cors());
+app.use(jwt({ secret: process.env.SECRET, algorithms: ["HS256"] }));
 app.use(express.json());
 app.use("/v1/api/words", word);
 app.use("/v1/api/exam", exam);
