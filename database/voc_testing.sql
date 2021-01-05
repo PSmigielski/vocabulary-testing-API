@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Czas generowania: 29 Lis 2020, 20:16
+-- Czas generowania: 05 Sty 2021, 17:16
 -- Wersja serwera: 8.0.22-0ubuntu0.20.10.2
 -- Wersja PHP: 7.4.9
 
@@ -25,10 +25,21 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Struktura tabeli dla tabeli `reset-password`
+-- Struktura tabeli dla tabeli `refresh_tokens`
 --
 
-CREATE TABLE `reset-password` (
+CREATE TABLE `refresh_tokens` (
+  `refresh_token` varchar(1024) COLLATE utf8_polish_ci NOT NULL,
+  `username` varchar(255) COLLATE utf8_polish_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `reset_password`
+--
+
+CREATE TABLE `reset_password` (
   `id` int NOT NULL,
   `email` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   `token` varchar(255) COLLATE utf8_polish_ci DEFAULT NULL
@@ -196,7 +207,8 @@ CREATE TABLE `users` (
   `id` int NOT NULL,
   `email` varchar(255) COLLATE utf8_polish_ci DEFAULT NULL,
   `username` varchar(255) COLLATE utf8_polish_ci DEFAULT NULL,
-  `password` varchar(255) COLLATE utf8_polish_ci NOT NULL
+  `password` varchar(255) COLLATE utf8_polish_ci NOT NULL,
+  `verified` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 -- --------------------------------------------------------
@@ -9477,11 +9489,19 @@ INSERT INTO `words` (`id`, `word`, `definition`, `section_id`) VALUES
 --
 
 --
--- Indeksy dla tabeli `reset-password`
+-- Indeksy dla tabeli `refresh_tokens`
 --
-ALTER TABLE `reset-password`
+ALTER TABLE `refresh_tokens`
+  ADD PRIMARY KEY (`refresh_token`),
+  ADD KEY `username` (`username`);
+
+--
+-- Indeksy dla tabeli `reset_password`
+--
+ALTER TABLE `reset_password`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `token` (`token`);
+  ADD UNIQUE KEY `token` (`token`),
+  ADD KEY `email` (`email`);
 
 --
 -- Indeksy dla tabeli `sections`
@@ -9516,9 +9536,9 @@ ALTER TABLE `words`
 --
 
 --
--- AUTO_INCREMENT dla tabeli `reset-password`
+-- AUTO_INCREMENT dla tabeli `reset_password`
 --
-ALTER TABLE `reset-password`
+ALTER TABLE `reset_password`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
@@ -9531,7 +9551,7 @@ ALTER TABLE `sections`
 -- AUTO_INCREMENT dla tabeli `test_results`
 --
 ALTER TABLE `test_results`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT dla tabeli `users`
@@ -9548,6 +9568,18 @@ ALTER TABLE `words`
 --
 -- Ograniczenia dla zrzutów tabel
 --
+
+--
+-- Ograniczenia dla tabeli `refresh_tokens`
+--
+ALTER TABLE `refresh_tokens`
+  ADD CONSTRAINT `refresh_tokens_ibfk_1` FOREIGN KEY (`username`) REFERENCES `users` (`username`);
+
+--
+-- Ograniczenia dla tabeli `reset_password`
+--
+ALTER TABLE `reset_password`
+  ADD CONSTRAINT `reset_password_ibfk_1` FOREIGN KEY (`email`) REFERENCES `users` (`email`);
 
 --
 -- Ograniczenia dla tabeli `test_results`

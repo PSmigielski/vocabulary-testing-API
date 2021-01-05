@@ -98,9 +98,17 @@ exports.login = (req, res) => {
           message: `credentials don't match`,
         });
       }
+      if (err.kind === "already_logged_in") {
+        return res.status(500).send({
+          message: `user has logged in already`,
+        });
+      }
     } else {
-      const token = createToken(credentials.username, process.env.SECRET);
-      res.status(200).cookie("token", token, { httpOnly: true }).send({
+      const JWTtoken = createToken(
+        credentials.username,
+        process.env.JWT_SECRET
+      );
+      res.status(200).cookie("token", JWTtoken, { httpOnly: true }).send({
         id: data[0].id,
         email: data[0].email,
         username: data[0].username,

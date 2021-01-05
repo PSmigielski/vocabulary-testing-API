@@ -2,7 +2,13 @@ const sql = require("../database/index");
 const CryptoJS = require("crypto-js");
 const resetMail = require("../mailer/resetMail.js");
 const verifyMail = require("../mailer/verifyMail.js");
+const jwt = require("jsonwebtoken");
 
+const createToken = (username, secret) => {
+  return jwt.sign({ username }, secret, {
+    expiresIn: 18000,
+  });
+};
 const User = function (user) {
   this.id = null;
   this.email = user.email;
@@ -20,7 +26,7 @@ User.genResetPasswordToken = (email, result) => {
   }
   const token = genHexString(20);
   sql.query(
-    `INSERT INTO \`reset-password\` (id, email, token) VALUES (0, ?, ?)`,
+    `INSERT INTO \`reset_password\` (id, email, token) VALUES (0, ?, ?)`,
     [email, token],
     (err, res) => {
       if (err) {
@@ -35,7 +41,7 @@ User.genResetPasswordToken = (email, result) => {
 };
 User.resetPassword = (resetUser, result) => {
   sql.query(
-    "SELECT * FROM `reset-password` WHERE token=?",
+    "SELECT * FROM `reset_password` WHERE token=?",
     resetUser.token,
     (err1, res1) => {
       if (err1) {
@@ -53,7 +59,7 @@ User.resetPassword = (resetUser, result) => {
         return;
       } else {
         sql.query(
-          `UPDATE users SET password=  ? WHERE email = ?`,
+          `UPDATE users SET password = ? WHERE email = ?`,
           [resetUser.password, resetUser.email],
           (err2, res2) => {
             if (err2) {
@@ -62,7 +68,7 @@ User.resetPassword = (resetUser, result) => {
               return;
             } else {
               sql.query(
-                `DELETE FROM \`reset-password\` WHERE email = ?`,
+                `DELETE FROM \`reset_password\` WHERE email = ?`,
                 resetUser.email,
                 (err3, res3) => {
                   if (err3) {
@@ -149,7 +155,37 @@ User.login = (credentials, result) => {
       if (res[0].verified == 0) {
         result(null, res[0].verified);
       } else {
-        result(null, res);
+        const refresh_token = createToken(
+          res[0].username,
+          process.env.REFRESH_TOKEN_SECRET
+        );
+        sql.query(
+          `SELECT * FROM \`refresh_tokens\` where \`refresh_token\`='${refresh_token}'`,
+          (err1, res1) => {
+            if (err1) {
+              console.log("error:", err1);
+              result(null, err1);
+              return;
+            }
+            if (res1.length == 1) {
+              result({ kind: "already_logged_in" }, null);
+              return;
+            } else {
+              sql.query(
+                `INSERT INTO \`refresh_tokens\` (\`refresh_token\`,\`username\`) VALUES ('${refresh_token}','${res[0].username}')`,
+                (err2, res2) => {
+                  if (err2) {
+                    console.log("error:", err2);
+                    result(null, err2);
+                    return;
+                  } else {
+                    result(null, res);
+                  }
+                }
+              );
+            }
+          }
+        );
       }
     }
   );
