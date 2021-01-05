@@ -2,8 +2,8 @@ const User = require("../models/user.model");
 const CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
 
-const createToken = (username, secret) => {
-  return jwt.sign({ username }, secret, {
+const createToken = (username, id, email, secret) => {
+  return jwt.sign({ username, id, email }, secret, {
     expiresIn: 18000,
   });
 };
@@ -105,7 +105,9 @@ exports.login = (req, res) => {
       }
     } else {
       const JWTtoken = createToken(
-        credentials.username,
+        data[0].username,
+        data[0].id,
+        data[0].email,
         process.env.JWT_SECRET
       );
       res.status(200).cookie("token", JWTtoken, { httpOnly: true }).send({
@@ -120,11 +122,11 @@ exports.delete = (req, res) => {
   User.remove(req.params.id, (err, data) => {
     if (err) {
       if (err.kind === "not_found") {
-        res.status(404).send({
+        return res.status(404).send({
           message: `Not found Customer with id ${req.params.id}.`,
         });
       } else {
-        res.status(500).send({
+        return res.status(500).send({
           message: "Could not delete User with id " + req.id,
         });
       }
@@ -144,5 +146,23 @@ exports.verify = (req, res) => {
         });
       }
     } else res.status(200).send({ message: `User was verified successfully!` });
+  });
+};
+exports.logout = (req, res) => {
+  User.logout(req.user.username, (err, data) => {
+    if (err) {
+      if ((err.kind = "no_logged_user")) {
+        return res
+          .status(404)
+          .send({ message: "nobody logged in with this username" });
+      } else {
+        return res.status(500).send({ message: "server error" });
+      }
+    } else {
+      res
+        .status(200)
+        .clearCookie("token", { httpOnly: true })
+        .send({ message: "logged out" });
+    }
   });
 };

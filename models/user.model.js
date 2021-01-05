@@ -5,9 +5,7 @@ const verifyMail = require("../mailer/verifyMail.js");
 const jwt = require("jsonwebtoken");
 
 const createToken = (username, secret) => {
-  return jwt.sign({ username }, secret, {
-    expiresIn: 18000,
-  });
+  return jwt.sign({ username }, secret);
 };
 const User = function (user) {
   this.id = null;
@@ -167,7 +165,7 @@ User.login = (credentials, result) => {
               result(null, err1);
               return;
             }
-            if (res1.length == 1) {
+            if (res1.length > 0) {
               result({ kind: "already_logged_in" }, null);
               return;
             } else {
@@ -194,7 +192,7 @@ User.remove = (id, result) => {
   sql.query("DELETE FROM users WHERE id = ?", id, (err, res) => {
     if (err) {
       console.log("error: ", err);
-      result(null, err);
+      result(err, null);
       return;
     }
     if (res.affectedRows == 0) {
@@ -224,5 +222,22 @@ User.verify = (username, result) => {
     }
   );
 };
-
+User.logout = (username, result) => {
+  sql.query(
+    `DELETE FROM \`refresh_tokens\` WHERE username=?`,
+    [username],
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+      if (res.length == 0) {
+        result({ kind: "no_logged_user" }, null);
+      } else {
+        result(null, { message: "successfully logged out" });
+      }
+    }
+  );
+};
 module.exports = User;
