@@ -1,6 +1,7 @@
 const User = require("../models/user.model");
 const CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
+const jwtDecode = require("jwt-decode");
 
 const createToken = (username, id, email, secret) => {
   return jwt.sign({ username, id, email }, secret, {
@@ -110,11 +111,24 @@ exports.login = (req, res) => {
         data[0].email,
         process.env.JWT_SECRET
       );
-      res.status(200).cookie("token", JWTtoken, { httpOnly: true }).send({
+      const exp = jwtDecode(JWTtoken).exp;
+      console.log({
         id: data[0].id,
         email: data[0].email,
         username: data[0].username,
+        exp,
       });
+      res
+        .status(200)
+        .cookie("token", JWTtoken, { httpOnly: true })
+        .json({
+          userInfo: {
+            id: data[0].id,
+            email: data[0].email,
+            username: data[0].username,
+          },
+          expiresAt: exp,
+        });
     }
   });
 };
