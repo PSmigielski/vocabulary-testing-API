@@ -112,12 +112,6 @@ exports.login = (req, res) => {
         process.env.JWT_SECRET
       );
       const exp = jwtDecode(JWTtoken).exp;
-      console.log({
-        id: data[0].id,
-        email: data[0].email,
-        username: data[0].username,
-        exp,
-      });
       res
         .status(200)
         .cookie("token", JWTtoken, { httpOnly: true })
