@@ -177,7 +177,14 @@ User.login = (credentials, result) => {
                     result(null, err2);
                     return;
                   } else {
-                    result(null, res);
+                    result(null, {
+                      userData:{
+                        id:res[0].id,
+                        username:res[0].username,
+                        email:res[0].email
+                      },
+                      refresh_token
+                    });
                   }
                 }
               );
@@ -240,4 +247,30 @@ User.logout = (username, result) => {
     }
   );
 };
+User.refresh_token = (token, result) =>{
+  sql.query(`SELECT * FROM \`refresh_tokens\` INNER JOIN \`users\` USING(\`username\`) WHERE \`refresh_tokens\`.\`refresh_token\`='${token}'`,
+  (err, res) => {
+    if (err) {
+      console.log("error:", err);
+      result(null, err);
+      return;
+    }
+    if (res.length == 0) {
+      result({ kind: "forbidden" }, null);
+      return;
+    }
+    else{
+      jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (error, user) =>{
+        if(error) result({ kind: "forbidden" }, null);
+        else{
+          result(null, {
+            id:res[0].id,
+            username:res[0].username,
+            email:res[0].email
+          })
+        }
+      })
+    }
+  })
+}
 module.exports = User;

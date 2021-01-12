@@ -9,5 +9,6 @@ router.put("/reset-password/:token", userController.resetPassword);
 router.delete("/delete", userController.delete);
 router.put("/verify/:login", userController.verify);
 router.delete("/logout", attachUser, userController.logout);
-
+router.post("/refresh", userController.refreshToken);
+//TODO add refreshing token method
 module.exports = router;

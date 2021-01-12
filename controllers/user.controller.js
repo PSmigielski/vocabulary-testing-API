@@ -3,9 +3,9 @@ const CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
 const jwtDecode = require("jwt-decode");
 
-const createToken = (username, id, email, secret) => {
+const createToken = ({username, id, email}, secret) => {
   return jwt.sign({ username, id, email }, secret, {
-    expiresIn: 18000,
+    expiresIn: "15m",
   });
 };
 exports.genResetPasswordToken = (req, res) => {
@@ -106,21 +106,16 @@ exports.login = (req, res) => {
       }
     } else {
       const JWTtoken = createToken(
-        data[0].username,
-        data[0].id,
-        data[0].email,
+        data.userData,
         process.env.JWT_SECRET
       );
       const exp = jwtDecode(JWTtoken).exp;
       res
         .status(200)
         .cookie("token", JWTtoken, { httpOnly: true })
+        .cookie("refresh_token", data.refresh_token, { httpOnly: true })
         .json({
-          userInfo: {
-            id: data[0].id,
-            email: data[0].email,
-            username: data[0].username,
-          },
+          userInfo: data.userData,
           expiresAt: exp,
         });
     }
@@ -170,7 +165,32 @@ exports.logout = (req, res) => {
       res
         .status(200)
         .clearCookie("token", { httpOnly: true })
+        .clearCookie("refresh_token", { httpOnly: true })
         .send({ message: "logged out" });
     }
   });
 };
+exports.refreshToken = (req, res) =>{
+  const token = req.cookies.refresh_token;
+  if(token){
+    User.refresh_token(token, (err, data)=>{
+      if(err){
+        if(err.kind === "forbidden"){
+          return res.status(403);
+        }else{
+          return res.status(500);
+        }
+      }
+      else{
+        const JWTtoken = createToken(data, process.env.JWT_SECRET);
+        const exp = jwtDecode(JWTtoken).exp;
+        res
+          .status(200)
+          .cookie("token", JWTtoken, { httpOnly: true })
+          .send({expiresAt: exp});
+      }
+    });
+  }else{
+    return res.status(401)
+  }
+}
