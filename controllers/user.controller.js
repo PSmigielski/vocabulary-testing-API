@@ -187,6 +187,7 @@ exports.refreshToken = (req, res) =>{
         res
           .status(200)
           .cookie("token", JWTtoken, { httpOnly: true })
+          .cookie("refresh_token", token, { httpOnly: true })
           .send({expiresAt: exp});
       }
     });
