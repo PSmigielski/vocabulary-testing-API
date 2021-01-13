@@ -166,33 +166,40 @@ exports.logout = (req, res) => {
         .status(200)
         .clearCookie("token", { httpOnly: true })
         .clearCookie("refresh_token", { httpOnly: true })
+        .clearCookie("_csrf")
         .send({ message: "logged out" });
     }
   });
 };
 exports.refreshToken = (req, res) =>{
-  const token = req.cookies.refresh_token;
-  if(token){
-    User.refresh_token(token, (err, data)=>{
-      if(err){
-        if(err.kind === "forbidden"){
-          return res.status(403);
-        }else{
-          return res.status(500);
+  const refreshToken = req.cookies.refresh_token;
+  const username = req.query.username;
+  const decodedRefreshToken = jwtDecode(refreshToken)
+  if(refreshToken){
+    if(decodedRefreshToken.username == username){
+      User.refresh_token(refreshToken, (err, data)=>{
+        if(err){
+          if(err.kind === "forbidden"){
+            return res.status(403);
+          }else{
+            return res.status(500);
+          }
         }
-      }
-      else{
-        const JWTtoken = createToken(data, process.env.JWT_SECRET);
-        const exp = jwtDecode(JWTtoken).exp;
-        res
-          .status(200)
-          .cookie("token", JWTtoken, { httpOnly: true })
-          .cookie("refresh_token", token, { httpOnly: true })
-          .send({expiresAt: exp});
-      }
-    });
+        else{
+          const JWTtoken = createToken(data, process.env.JWT_SECRET);
+          const exp = jwtDecode(JWTtoken).exp;
+          return res
+            .status(200)
+            .cookie("token", JWTtoken, { httpOnly: true })
+            .cookie("refresh_token", refreshToken, { httpOnly: true })
+            .send({expiresAt: exp});
+        }
+      });
+    }else{
+      return res.status(403).send({message:'forbidden'});
+    }
   }else{
-    return res.status(401)
+    return res.status(401).send({message:'No authorization token '});
   }
 }
 exports.checkResetPasswordToken = (req, res) =>{

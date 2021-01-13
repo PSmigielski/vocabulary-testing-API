@@ -274,7 +274,6 @@ User.refresh_token = (token, result) => {
   })
 }
 User.checkResetPasswordToken = (token, result) => {
-  console.log(token)
   sql.query(`SELECT \`token\` FROM \`reset_password\` WHERE \`token\` = '${token}'`, (err, res)=>{
     if(err){
       console.log("error: ", err);

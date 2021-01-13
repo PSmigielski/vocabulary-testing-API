@@ -7,7 +7,7 @@ const csrfProtection = require("../middleware/csrfProtection");
 router.post("/login", csrfProtection, userController.login);
 router.post("/register", csrfProtection, userController.create);
 router.post("/reset-password", csrfProtection, userController.genResetPasswordToken);
-router.post("/refresh", csrfProtection, checkRefreshToken, userController.refreshToken);
+router.post("/refresh", csrfProtection, checkRefreshToken,   userController.refreshToken);
 router.put("/reset-password/:token", csrfProtection, userController.resetPassword);
 router.put("/verify/:login", csrfProtection , userController.verify);
 router.delete("/delete", csrfProtection, userController.delete);
