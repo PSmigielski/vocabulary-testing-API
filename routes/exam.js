@@ -1,7 +1,8 @@
 const router = require("express").Router();
 const examController = require("../controllers/exam.controller");
+const csrfProtection = require("../middleware/csrfProtection");
 
-router.post("/create", examController.create);
-router.post("/save", examController.saveResults);
+router.post("/create", csrfProtection, examController.create);
+router.post("/save", csrfProtection, examController.saveResults);
 
 module.exports = router;
