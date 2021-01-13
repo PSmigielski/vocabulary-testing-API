@@ -247,7 +247,7 @@ User.logout = (username, result) => {
     }
   );
 };
-User.refresh_token = (token, result) =>{
+User.refresh_token = (token, result) => {
   sql.query(`SELECT * FROM \`refresh_tokens\` INNER JOIN \`users\` USING(\`username\`) WHERE \`refresh_tokens\`.\`refresh_token\`='${token}'`,
   (err, res) => {
     if (err) {
@@ -271,6 +271,23 @@ User.refresh_token = (token, result) =>{
         }
       })
     }
+  })
+}
+User.checkResetPasswordToken = (token, result) => {
+  console.log(token)
+  sql.query(`SELECT \`token\` FROM \`reset_password\` WHERE \`token\` = '${token}'`, (err, res)=>{
+    if(err){
+      console.log("error: ", err);
+      result(err, null)
+      return
+    }
+    if(res.length == 0){
+      result({kind:'not_found'}, null);
+      return;
+    }
+    else{
+      result(null, {message: 'token is valid'});
+    } 
   })
 }
 module.exports = User;

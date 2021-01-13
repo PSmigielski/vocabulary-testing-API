@@ -195,3 +195,17 @@ exports.refreshToken = (req, res) =>{
     return res.status(401)
   }
 }
+exports.checkResetPasswordToken = (req, res) =>{
+  const token = req.params.token;
+  User.checkResetPasswordToken(token, (err, data)=>{
+    if(err){
+      if(err.kind == "not_found"){
+        return res.status(404).send({message: 'not found'});
+      }
+      return res.status(500);
+    }
+    else{
+      return res.status(204).send(data);
+    }
+  });
+}
