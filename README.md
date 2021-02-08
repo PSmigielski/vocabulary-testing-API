@@ -31,10 +31,6 @@ To get a local copy up and running follow these simple example steps.
 ```bash
     npm run start
 ```
-    or
-```bash
-    npm run dev
-```
 
 ## Technologies used in this project
  - [NodeJS](https://nodejs.org/en/docs/)
